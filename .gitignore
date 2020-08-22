@@ -139,6 +139,4 @@ dmypy.json
 .pyre/
 
 # temporary
-/docker
-docker-comopse.yml
-Dockerfile
+localhost.sql

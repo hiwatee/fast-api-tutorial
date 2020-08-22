@@ -1,26 +1,32 @@
-from typing import Optional
 from fastapi import FastAPI
-from pydantic import BaseModel
+from db import database
+from users.router import router as userrouter
+from starlette.requests import Request
 
 app = FastAPI()
 
-
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Optional[bool] = None
+# 起動時にDatabaseに接続する。
 
 
-@app.get("/")
-async def read_root():
-    return {"Hello": "World"}
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+
+# 終了時にDatabaseを切断する。
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
+
+# users routerを登録する。
+app.include_router(userrouter)
+
+# middleware state.connectionにdatabaseオブジェクトをセットする。
 
 
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item_id}
+@app.middleware("http")
+async def db_session_middleware(request: Request, call_next):
+    request.state.connection = database
+    response = await call_next(request)
+    return response

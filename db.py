@@ -1,12 +1,13 @@
 import databases
 import sqlalchemy
+import os
 
-DATABASE = 'postgresql'
-USER = 'testuser'
-PASSWORD = 'secret'
-HOST = 'localhost'
-PORT = '5432'
-DB_NAME = 'testdb'
+DATABASE = 'mysql'
+USER = os.environ.get('DB_USERNAME')
+PASSWORD = os.environ.get('DB_PASSWORD')
+HOST = os.environ.get('DB_HOST')
+PORT = '3306'
+DB_NAME = os.environ.get('DB_DATABASE')
 
 DATABASE_URL = '{}://{}:{}@{}:{}/{}'.format(
     DATABASE, USER, PASSWORD, HOST, PORT, DB_NAME)
