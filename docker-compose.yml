@@ -7,9 +7,10 @@ services:
       - ./db_data:/var/lib/mysql
       - ./localhost.sql:/docker-entrypoint-initdb.d/install_db.sql
     environment:
-      MYSQL_DATABASE: "database"
-      MYSQL_USER: "root"
-      MYSQL_PASSWORD: "password"
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: database
+      MYSQL_USER: fastapi
+      MYSQL_PASSWORD: password
     ports:
       - 3306:3306
   project-api:
@@ -21,9 +22,9 @@ services:
     depends_on:
       - mysql
     environment:
-      DB_HOST: "mysql"
-      DB_DATABASE: "database"
-      DB_USERNAME: "root"
-      DB_PASSWORD: "password"
+      DB_HOST: mysql
+      DB_DATABASE: database
+      DB_USERNAME: fastapi
+      DB_PASSWORD: password
     volumes:
       - .:/code:cached
